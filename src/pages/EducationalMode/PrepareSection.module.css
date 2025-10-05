@@ -1,0 +1,128 @@
+/* Prepare Section Styles */
+
+.content-section {
+  margin: 0 auto;
+  padding: 40px 0;
+  width: 100%;
+}
+
+.section-title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 16px 0;
+  text-align: center;
+}
+
+.section-subtitle {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+  margin: 0 0 40px 0;
+}
+
+.prepare-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  margin-top: 40px;
+}
+
+.prepare-card {
+  background: rgba(30, 30, 30, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 30px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease;
+}
+
+.prepare-card:hover {
+  transform: translateY(-5px);
+}
+
+.prepare-card h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 0 12px 0;
+}
+
+.prepare-card p {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0 0 20px 0;
+}
+
+.prepare-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.prepare-card li {
+  padding: 8px 0;
+  color: rgba(255, 255, 255, 0.8);
+  position: relative;
+  padding-left: 20px;
+}
+
+.prepare-card li::before {
+  content: "•";
+  color: #646cff;
+  position: absolute;
+  left: 0;
+}
+
+/* Galaxy Viewer Styles */
+.galaxyViewer {
+  margin-top: 40px;
+  background: rgba(20, 20, 20, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  padding: 30px;
+  backdrop-filter: blur(10px);
+}
+
+.galaxyViewer h3 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin: 0 0 10px 0;
+  color: #646cff;
+  text-align: center;
+}
+
+.galaxyViewer p {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+  margin: 0 0 20px 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .section-title {
+    font-size: 1.6rem;
+  }
+  
+  .prepare-cards {
+    grid-template-columns: 1fr;
+  }
+  
+  .content-section {
+    padding: 30px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .section-title {
+    font-size: 1.4rem;
+  }
+  
+  .content-section {
+    padding: 20px 0;
+  }
+  
+  .prepare-card {
+    padding: 15px;
+  }
+}

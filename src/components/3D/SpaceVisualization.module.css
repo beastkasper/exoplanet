@@ -1,0 +1,277 @@
+/* Space Visualization Styles */
+
+.container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  background: radial-gradient(ellipse at center, #0a0a0a 0%, #000000 100%);
+  overflow: hidden;
+}
+
+.uiOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 100;
+}
+
+.planetInfo {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 20px;
+  color: white;
+  font-family: 'Inter', sans-serif;
+  max-width: 300px;
+  pointer-events: auto;
+}
+
+.planetInfo h3 {
+  margin: 0 0 12px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #ffd700;
+}
+
+.planetInfo p {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  color: #b0b0b0;
+  line-height: 1.4;
+}
+
+.planetInfo p:last-child {
+  margin-bottom: 0;
+}
+
+.hoverInfo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 12px 16px;
+  color: white;
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  pointer-events: none;
+  text-align: center;
+  min-width: 120px;
+}
+
+.planetLabel {
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  pointer-events: none;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .planetInfo {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+    max-width: none;
+    padding: 15px;
+  }
+  
+  .planetInfo h3 {
+    font-size: 16px;
+  }
+  
+  .planetInfo p {
+    font-size: 13px;
+  }
+  
+  .hoverInfo {
+    font-size: 14px;
+    padding: 10px 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .planetInfo {
+    padding: 12px;
+  }
+  
+  .planetInfo h3 {
+    font-size: 15px;
+  }
+  
+  .planetInfo p {
+    font-size: 12px;
+  }
+  
+  .hoverInfo {
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+}
+
+/* Loading Animation */
+.loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-family: 'Inter', sans-serif;
+  text-align: center;
+}
+
+.loadingSpinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top: 3px solid #ffd700;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Performance indicators */
+.performanceInfo {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-family: 'Inter', sans-serif;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Controls hint */
+.controlsHint {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-family: 'Inter', sans-serif;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  max-width: 200px;
+}
+
+.controlsHint h4 {
+  margin: 0 0 8px 0;
+  font-size: 13px;
+  color: #ffd700;
+}
+
+.controlsHint ul {
+  margin: 0;
+  padding-left: 16px;
+}
+
+.controlsHint li {
+  margin: 0 0 4px 0;
+  font-size: 11px;
+  color: #b0b0b0;
+}
+
+/* Scroll-based animation triggers */
+.scrollTrigger {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 200vh;
+  pointer-events: none;
+}
+
+/* Cinematic effects */
+.cinematicBars {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 50;
+}
+
+.cinematicBars::before,
+.cinematicBars::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.cinematicBars::before {
+  top: 0;
+}
+
+.cinematicBars::after {
+  bottom: 0;
+}
+
+/* Particle effects overlay */
+.particleOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* Light rays effect */
+.lightRays {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 0%,
+    transparent 40%,
+    rgba(255, 215, 0, 0.1) 60%,
+    rgba(255, 215, 0, 0.05) 80%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 5;
+  animation: lightRaysPulse 4s ease-in-out infinite;
+}
+
+@keyframes lightRaysPulse {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}

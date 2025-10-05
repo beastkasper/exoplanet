@@ -1,0 +1,383 @@
+/* Modal Overlay */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Modal Container */
+.modal {
+  background: #242424;
+  border-radius: 16px;
+  max-width: 90vw;
+  max-height: 90vh;
+  width: 800px;
+  padding: 40px;
+  position: relative;
+  overflow-y: auto;
+  animation: slideIn 0.3s ease-out;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+}
+
+/* Close Button */
+.closeButton {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: transparent;
+  border: none;
+  color: #FFFFFF;
+  font-size: 24px;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+}
+
+.closeButton:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Header Section */
+.header {
+  margin-bottom: 30px;
+}
+
+.topButtons {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.noticeButton,
+.proButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background: #242424;
+  border: 1px solid #B0B0B0;
+  border-radius: 20px;
+  color: #FFFFFF;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.noticeButton:hover,
+.proButton:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: #FFFFFF;
+}
+
+.buttonIcon {
+  font-size: 12px;
+}
+
+.title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin: 0;
+  line-height: 1.2;
+}
+
+/* Visual Section */
+.visualSection {
+  margin-bottom: 40px;
+  display: flex;
+  justify-content: center;
+}
+
+.planetIllustration {
+  position: relative;
+  width: 300px;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.planet {
+  width: 120px;
+  height: 120px;
+  background: linear-gradient(135deg, #4a4a4a 0%, #2a2a2a 100%);
+  border-radius: 50%;
+  position: relative;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+}
+
+.planetRings {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 180px;
+  height: 180px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  box-shadow: 
+    0 0 0 1px rgba(255, 255, 255, 0.2),
+    0 0 0 2px rgba(255, 255, 255, 0.1);
+}
+
+.backgroundElements {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+
+.element {
+  position: absolute;
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.element:nth-child(1) {
+  top: 20px;
+  left: 20px;
+}
+
+.element:nth-child(2) {
+  top: 40px;
+  right: 30px;
+}
+
+.element:nth-child(3) {
+  bottom: 30px;
+  left: 50px;
+}
+
+/* Information Section */
+.infoSection {
+  margin-bottom: 40px;
+}
+
+.infoTitle {
+  font-size: 24px;
+  font-weight: 600;
+  color: #FFFFFF;
+  margin: 0 0 12px 0;
+}
+
+.infoSubtitle {
+  font-size: 16px;
+  color: #B0B0B0;
+  margin: 0 0 30px 0;
+  line-height: 1.5;
+}
+
+.infoPoints {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.infoPoint {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pointHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pointIcon {
+  font-size: 20px;
+}
+
+.pointTitle {
+  font-size: 16px;
+  font-weight: 500;
+  color: #FFFFFF;
+}
+
+.pointDescription {
+  font-size: 14px;
+  color: #B0B0B0;
+  line-height: 1.5;
+  margin: 0;
+  padding-left: 32px;
+}
+
+/* Missions Section */
+.missionsSection {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.missionCard {
+  flex: 1;
+  text-align: left;
+}
+
+.missionTitle {
+  font-size: 20px;
+  font-weight: 600;
+  color: #FFFFFF;
+  margin: 0 0 8px 0;
+}
+
+.missionDescription {
+  font-size: 14px;
+  color: #B0B0B0;
+  margin: 0 0 12px 0;
+  line-height: 1.4;
+}
+
+.missionImage {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+}
+
+.spacecraftIcon {
+  font-size: 24px;
+  opacity: 0.7;
+}
+
+/* Exoplanet Details Section */
+.exoplanetDetails {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.detailsTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #FFFFFF;
+  margin: 0 0 16px 0;
+}
+
+.detailsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.detailItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.detailLabel {
+  font-size: 14px;
+  color: #B0B0B0;
+  font-weight: 500;
+}
+
+.detailValue {
+  font-size: 14px;
+  color: #FFFFFF;
+  font-weight: 600;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .modal {
+    width: 95vw;
+    padding: 20px;
+    max-height: 95vh;
+  }
+  
+  .title {
+    font-size: 24px;
+  }
+  
+  .missionsSection {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .detailsGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .planetIllustration {
+    width: 250px;
+    height: 150px;
+  }
+  
+  .planet {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .planetRings {
+    width: 120px;
+    height: 120px;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal {
+    padding: 16px;
+  }
+  
+  .title {
+    font-size: 20px;
+  }
+  
+  .infoTitle {
+    font-size: 20px;
+  }
+  
+  .missionTitle {
+    font-size: 18px;
+  }
+  
+  .topButtons {
+    flex-direction: column;
+    gap: 8px;
+  }
+}

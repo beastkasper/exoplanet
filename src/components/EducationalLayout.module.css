@@ -1,0 +1,152 @@
+/* Educational Layout Styles */
+
+.educationalLayout {
+  min-height: 100vh;
+  color: white;
+  padding: 0;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+/* Header Section */
+.headerSection {
+  text-align: center;
+  padding: 40px 20px;
+  position: relative;
+  max-width: 700px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.headerButtons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 40px;
+}
+
+.noticeBtn, .proBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: rgba(40, 40, 40, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.noticeBtn:hover, .proBtn:hover {
+  background: rgba(60, 60, 60, 0.9);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.starIcon, .docIcon {
+  font-size: 16px;
+}
+
+.mainTitle {
+  font-size: 3rem;
+  font-weight: 700;
+  margin: 0 0 16px 0;
+  background: linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.1;
+}
+
+.subtitle {
+  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0 0 40px 0;
+  font-weight: 400;
+}
+
+.mainNav {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 40px;
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 20px;
+}
+
+.navBtn {
+  padding: 12px 24px;
+  background: rgba(40, 40, 40, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 25px;
+  color: white;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.navBtn:hover {
+  background: rgba(60, 60, 60, 0.9);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.navBtn.active {
+  background: rgba(100, 108, 255, 0.2);
+  border-color: rgba(100, 108, 255, 0.5);
+  color: #646cff;
+}
+
+/* Content Area */
+.educationalContent {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 0 20px 40px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .mainTitle {
+    font-size: 2.2rem;
+  }
+  
+  .mainNav {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .navBtn {
+    width: 200px;
+  }
+  
+  .headerSection {
+    padding: 20px 15px;
+  }
+  
+  .educationalContent {
+    padding: 0 15px 30px;
+  }
+}
+
+@media (max-width: 480px) {
+  .mainTitle {
+    font-size: 1.8rem;
+  }
+  
+  .headerSection {
+    padding: 15px 10px;
+  }
+  
+  .educationalContent {
+    padding: 0 10px 20px;
+  }
+}
