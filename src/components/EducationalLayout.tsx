@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import { EducationalContext } from "../contexts/EducationalContext";
+import ModeToggle from "./ModeToggle";
 import styles from "./EducationalLayout.module.css";
 
 export default function EducationalLayout() {
@@ -11,14 +12,7 @@ export default function EducationalLayout() {
       {/* Header Section */}
       <header className={styles.headerSection}>
         <div className={styles.headerButtons}>
-          <button className={styles.noticeBtn}>
-            <span className={styles.starIcon}>⭐</span>
-            Notice
-          </button>
-          <button className={styles.proBtn}>
-            <span className={styles.docIcon}>📄</span>
-            Pro
-          </button>
+          <ModeToggle />
         </div>
 
         <h1 className={styles.mainTitle}>World of Exoplanets</h1>
@@ -32,12 +26,12 @@ export default function EducationalLayout() {
         >
           Learn
         </button>
-        <button 
+        {/* <button 
           className={`${styles.navBtn} ${activeSection === "predict" ? styles.active : ""}`}
           onClick={() => setActiveSection("predict")}
         >
           predict
-        </button>
+        </button> */}
         <button 
           className={`${styles.navBtn} ${activeSection === "simulator" ? styles.active : ""}`}
           onClick={() => setActiveSection("simulator")}

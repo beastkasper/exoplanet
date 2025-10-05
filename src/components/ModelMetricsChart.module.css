@@ -1,0 +1,187 @@
+/* Model Metrics Chart Styles */
+
+.chartContainer {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 24px;
+  backdrop-filter: blur(10px);
+  margin-top: 24px;
+}
+
+.chartHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.chartTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: white;
+  margin: 0;
+}
+
+.modelStats {
+  display: flex;
+  gap: 24px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.statLabel {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.statValue {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #4CAF50;
+}
+
+.chartsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 24px;
+}
+
+.chartWrapper {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.3s ease;
+}
+
+.chartWrapper:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.chartSubtitle {
+  font-size: 1rem;
+  font-weight: 500;
+  color: white;
+  margin: 0 0 16px 0;
+  text-align: center;
+}
+
+.noData {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
+}
+
+.noData p {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 1.125rem;
+  margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .chartContainer {
+    padding: 16px;
+  }
+  
+  .chartHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .chartTitle {
+    font-size: 1.25rem;
+  }
+  
+  .modelStats {
+    gap: 16px;
+  }
+  
+  .chartsGrid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .chartWrapper {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .chartContainer {
+    padding: 12px;
+  }
+  
+  .chartTitle {
+    font-size: 1.125rem;
+  }
+  
+  .statValue {
+    font-size: 1rem;
+  }
+  
+  .chartWrapper {
+    padding: 12px;
+  }
+}
+
+/* Custom Legend Styles */
+.recharts-legend-wrapper {
+  padding-top: 16px !important;
+}
+
+.recharts-legend-item {
+  color: white !important;
+}
+
+.recharts-legend-item-text {
+  color: white !important;
+  font-size: 14px !important;
+}
+
+/* Custom Tooltip Styles */
+.recharts-tooltip-wrapper {
+  outline: none !important;
+}
+
+.recharts-tooltip-content {
+  background: rgba(0, 0, 0, 0.9) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3) !important;
+}
+
+.recharts-tooltip-label {
+  color: white !important;
+  font-weight: 500 !important;
+}
+
+.recharts-tooltip-item {
+  color: white !important;
+}
+
+.recharts-tooltip-item-name {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.recharts-tooltip-item-value {
+  color: white !important;
+  font-weight: 600 !important;
+}

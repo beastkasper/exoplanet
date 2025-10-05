@@ -4,6 +4,7 @@ import ExoplanetMap from "../pages/ExoplanetMap";
 import Fragment from "../pages/Fragment";
 import NoobMode from "../pages/NoobMode";
 import ProMode from "../pages/ProMode";
+import Compete from "../pages/Compete";
 import EducationalMode from "../pages/EducationalMode";
 import EducationalLayout from "../components/EducationalLayout";
 import NASAEyesExoplanets from "../pages/NASAEyesExoplanets";
@@ -26,6 +27,7 @@ export const router = createBrowserRouter([
         ],
       },
       { path: "pro", element: <ProMode /> },
+      { path: "compete", element: <Compete /> },
       { path: "nasa-eyes", element: <NASAEyesExoplanets /> },
       { path: "space-viz", element: <SpaceVisualization /> },
     ],

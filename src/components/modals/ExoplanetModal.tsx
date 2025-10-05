@@ -34,11 +34,6 @@ const ExoplanetModal: React.FC<ExoplanetModalProps> = ({ isOpen, onClose, exopla
   return (
     <div className={styles.modalOverlay} onClick={onClose}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-        {/* Close Button */}
-        <button className={styles.closeButton} onClick={onClose}>
-          ×
-        </button>
-
         {/* Header Section */}
         <div className={styles.header}>
           <div className={styles.topButtons}>
