@@ -1,7 +1,7 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import ModeToggle from '../components/ModeToggle';
-import styles from './Compete.module.css';
+import React from "react";
+import { motion } from "framer-motion";
+import ModeToggle from "../components/ModeToggle";
+import styles from "./Compete.module.css";
 
 export default function Compete() {
   return (
@@ -16,19 +16,16 @@ export default function Compete() {
         <div className={styles.badges}>
           <ModeToggle />
         </div>
-        
+
         <h1 className={styles.title}>Exoplanets for Pro</h1>
         <p className={styles.subtitle}>Deeper into data, closer to discovery</p>
-        
+
         <div className={styles.tabs}>
-          <button className={styles.tab}>
+          <a href="/pro" className={styles.tab}>
             Predict
-          </button>
+          </a>
           <button className={`${styles.tab} ${styles.tabActive}`}>
             Compete
-          </button>
-          <button className={styles.tab}>
-            About
           </button>
         </div>
       </motion.header>
@@ -60,7 +57,7 @@ export default function Compete() {
           >
             Explore and Win
           </motion.h2>
-          
+
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -141,9 +138,7 @@ export default function Compete() {
           transition={{ duration: 0.5, delay: 1.2 }}
           className={styles.comingSoonSection}
         >
-          <button className={styles.comingSoonButton}>
-            Coming soon
-          </button>
+          <button className={styles.comingSoonButton}>Coming soon</button>
         </motion.div>
       </motion.main>
     </div>
