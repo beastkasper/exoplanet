@@ -1,71 +1,81 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
-import { Canvas } from '@react-three/fiber';
+import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Stars, useGLTF, Html } from '@react-three/drei';
 import { fetchExoplanets } from '../api/exoplanets';
-import ExoplanetModal from '../components/modals/ExoplanetModal';
 import type { Exoplanet } from '../types/exoplanet';
+import { equatorialToGalactic, galacticToCartesian, getSunGalacticPosition } from '../utils/astronomicalUtils';
+import * as THREE from 'three';
 
-// Sun's position in galactic coordinates (8.3 kpc from galactic center)
-const SUN_POSITION: [number, number, number] = [8.3, 0, 0]; // 8.3 kpc from center
+// Get Sun's position using proper galactic coordinate system
+const sunPosition = getSunGalacticPosition();
+const SUN_POSITION: [number, number, number] = [sunPosition.x, sunPosition.y, sunPosition.z];
 
-// Individual Exoplanet component with hover and click functionality
-const ExoplanetPoint: React.FC<{ 
-  planet: Exoplanet; 
-  position: [number, number, number]; 
-  scale: number;
-  onPlanetClick: (planet: Exoplanet) => void;
+console.log('Sun position in galactic coordinates:', SUN_POSITION);
+
+// Enhanced 3D Planet component with detailed model
+const Planet3D: React.FC<{
+  planet: Exoplanet;
+  position: [number, number, number];
   isSelected: boolean;
-  isAnimating: boolean;
-}> = ({ planet, position, scale, onPlanetClick, isSelected, isAnimating }) => {
+  onPlanetClick: (planet: Exoplanet) => void;
+}> = ({ planet, position, isSelected, onPlanetClick }) => {
+  const meshRef = React.useRef<THREE.Mesh>(null);
   const [hovered, setHovered] = useState(false);
-  const [clicked, setClicked] = useState(false);
 
-  // Color based on planet properties and selection state
+  // Determine planet properties
   const getPlanetColor = useCallback(() => {
-    if (isSelected) return '#FF00FF'; // Magenta for selected planet
-    if (planet.sy_dist && planet.sy_dist < 50) return '#4CAF50'; // Green for nearby
-    if (planet.pl_rade && planet.pl_rade > 2) return '#FF5722'; // Red for large
-    if (planet.pl_rade && planet.pl_rade < 0.5) return '#2196F3'; // Blue for small
-    return '#FFC107'; // Yellow for others
-  }, [planet.sy_dist, planet.pl_rade, isSelected]);
+    if (isSelected) return '#FF00FF'; // Bright magenta for selected
+    if (planet.pl_eqt && planet.pl_eqt > 500) return '#FF6347'; // Orange for hot planets
+    if (planet.pl_eqt && planet.pl_eqt < 200) return '#87CEEB'; // Light blue for cold planets
+    if (planet.pl_rade && planet.pl_rade > 2) return '#FF4500'; // Red for large planets
+    if (planet.pl_rade && planet.pl_rade < 0.5) return '#00BFFF'; // Blue for small planets
+    return '#FFFF00'; // Yellow for others
+  }, [planet.pl_eqt, planet.pl_rade, isSelected]);
 
-  const handleClick = useCallback((event: React.MouseEvent) => {
-    event.stopPropagation();
-    setClicked(true);
-    onPlanetClick(planet);
-    setTimeout(() => setClicked(false), 2000);
-  }, [planet, onPlanetClick]);
+  const getPlanetSize = useCallback(() => {
+    const baseSize = 0.5;
+    const sizeMultiplier = Math.max(0.3, Math.min(2.0, (planet.pl_rade || 1) * 0.5));
+    return baseSize * sizeMultiplier;
+  }, [planet.pl_rade]);
 
-  // Calculate dynamic scale based on selection and animation
-  const dynamicScale = useMemo(() => {
-    let baseScale = scale;
-    if (isSelected) baseScale *= 3; // Make selected planet much larger
-    if (hovered) baseScale *= 1.5;
-    if (clicked) baseScale *= 2;
-    if (isAnimating && isSelected) baseScale *= 1.5; // Pulse effect during animation
-    return baseScale;
-  }, [scale, isSelected, hovered, clicked, isAnimating]);
+  // Animation
+  useFrame((state) => {
+    if (meshRef.current) {
+      meshRef.current.rotation.y += 0.01;
+      if (isSelected) {
+        meshRef.current.scale.setScalar(1 + Math.sin(state.clock.elapsedTime * 3) * 0.2);
+      } else {
+        meshRef.current.scale.setScalar(hovered ? 1.2 : 1.0);
+      }
+    }
+  });
 
   return (
     <group position={position}>
+      {/* Main planet sphere */}
       <mesh
-        scale={dynamicScale}
-        onClick={handleClick}
+        ref={meshRef}
+        onClick={(e) => {
+          e.stopPropagation();
+          onPlanetClick(planet);
+        }}
         onPointerOver={() => setHovered(true)}
         onPointerOut={() => setHovered(false)}
       >
-        <sphereGeometry args={[1, 8, 6]} />
-        <meshBasicMaterial 
+        <sphereGeometry args={[getPlanetSize(), 32, 32]} />
+        <meshStandardMaterial 
           color={getPlanetColor()}
-          transparent
-          opacity={hovered || isSelected ? 1 : 0.8}
+          emissive={getPlanetColor()}
+          emissiveIntensity={0.3}
+          roughness={0.7}
+          metalness={0.1}
         />
       </mesh>
       
-      {/* Glow effect for selected planet */}
-      {isSelected && (
-        <mesh scale={dynamicScale * 1.5}>
-          <sphereGeometry args={[1, 8, 6]} />
+      {/* Atmospheric layer for larger planets */}
+      {(planet.pl_rade && planet.pl_rade > 1.5) && (
+        <mesh scale={1.1}>
+          <sphereGeometry args={[getPlanetSize(), 16, 16]} />
           <meshBasicMaterial 
             color={getPlanetColor()}
             transparent
@@ -74,29 +84,121 @@ const ExoplanetPoint: React.FC<{
         </mesh>
       )}
       
-      {/* Tooltip on hover */}
-      {hovered && (
+      {/* Glow effect for selected planet */}
+      {isSelected && (
+        <mesh scale={1.5}>
+          <sphereGeometry args={[getPlanetSize(), 16, 16]} />
+          <meshBasicMaterial 
+            color={getPlanetColor()}
+            transparent
+            opacity={0.2}
+          />
+        </mesh>
+      )}
+      
+      {/* Planet label */}
+      {(hovered || isSelected) && (
         <Html distanceFactor={10}>
           <div style={{
-            background: 'rgba(0, 0, 0, 0.8)',
+            background: 'rgba(0, 0, 0, 0.9)',
             color: 'white',
             padding: '8px 12px',
             borderRadius: '6px',
             fontSize: '12px',
             whiteSpace: 'nowrap',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
+            border: '1px solid rgba(255, 255, 255, 0.3)',
             pointerEvents: 'none'
           }}>
             <div><strong>{planet.pl_name}</strong></div>
+            <div>Host: {planet.hostname}</div>
             <div>Distance: {planet.sy_dist?.toFixed(1)} pc</div>
             {planet.pl_rade && <div>Radius: {planet.pl_rade.toFixed(2)} R⊕</div>}
-            {planet.pl_orbper && <div>Period: {planet.pl_orbper.toFixed(1)} days</div>}
+            {planet.pl_eqt && <div>Temp: {planet.pl_eqt.toFixed(0)} K</div>}
           </div>
         </Html>
       )}
     </group>
   );
 };
+
+// Animated Sun component with pulsing corona effects
+const AnimatedSun: React.FC = () => {
+  const coronaRef1 = React.useRef<THREE.Mesh>(null);
+  const coronaRef2 = React.useRef<THREE.Mesh>(null);
+  const coronaRef3 = React.useRef<THREE.Mesh>(null);
+
+  useFrame((state) => {
+    const time = state.clock.elapsedTime;
+    
+    // Animate corona layers with different frequencies - More visible
+    if (coronaRef1.current) {
+      const scale1 = 1.2 + Math.sin(time * 2) * 0.1;
+      const opacity1 = 0.6 + Math.sin(time * 1.5) * 0.2;
+      coronaRef1.current.scale.setScalar(scale1);
+      (coronaRef1.current.material as THREE.MeshBasicMaterial).opacity = Math.max(0.4, opacity1);
+    }
+    
+    if (coronaRef2.current) {
+      const scale2 = 1.4 + Math.sin(time * 1.5) * 0.15;
+      const opacity2 = 0.4 + Math.sin(time * 1.2) * 0.2;
+      coronaRef2.current.scale.setScalar(scale2);
+      (coronaRef2.current.material as THREE.MeshBasicMaterial).opacity = Math.max(0.2, opacity2);
+    }
+    
+    if (coronaRef3.current) {
+      const scale3 = 1.6 + Math.sin(time * 1) * 0.2;
+      const opacity3 = 0.3 + Math.sin(time * 0.8) * 0.15;
+      coronaRef3.current.scale.setScalar(scale3);
+      (coronaRef3.current.material as THREE.MeshBasicMaterial).opacity = Math.max(0.15, opacity3);
+    }
+  });
+
+  return (
+    <group position={SUN_POSITION}>
+      {/* Core Sun - Much larger and more visible */}
+      <mesh>
+        <sphereGeometry args={[1.0, 32, 32]} />
+        <meshBasicMaterial 
+          color="#FFD700" 
+          transparent
+          opacity={1.0}
+        />
+      </mesh>
+      
+      {/* Animated Corona layer 1 - More visible */}
+      <mesh ref={coronaRef1}>
+        <sphereGeometry args={[1, 16, 16]} />
+        <meshBasicMaterial 
+          color="#FFA500" 
+          transparent
+          opacity={0.6}
+        />
+      </mesh>
+      
+      {/* Animated Corona layer 2 - More visible */}
+      <mesh ref={coronaRef2}>
+        <sphereGeometry args={[1, 16, 16]} />
+        <meshBasicMaterial 
+          color="#FF6347" 
+          transparent
+          opacity={0.4}
+        />
+      </mesh>
+      
+      {/* Animated Corona layer 3 - More visible */}
+      <mesh ref={coronaRef3}>
+        <sphereGeometry args={[1, 16, 16]} />
+        <meshBasicMaterial 
+          color="#FF1493" 
+          transparent
+          opacity={0.3}
+        />
+      </mesh>
+    </group>
+  );
+};
+
+// Note: Legacy ExoplanetPoint removed after Planet3D introduction
 
 // Galaxy component with exoplanets
 const GalaxyWithExoplanets: React.FC<{ 
@@ -105,29 +207,45 @@ const GalaxyWithExoplanets: React.FC<{
   onPlanetClick: (planet: Exoplanet) => void;
   selectedPlanet: Exoplanet | null;
   isAnimating: boolean;
-}> = ({ exoplanets, maxPlanets, onPlanetClick, selectedPlanet, isAnimating }) => {
+}> = ({ exoplanets, maxPlanets, onPlanetClick, selectedPlanet }) => {
+  // Load galaxy model from public folder
   const { scene } = useGLTF('/andromeda.glb');
   const [cameraDistance, setCameraDistance] = React.useState(50);
   
-  // Clone the galaxy model and position it so Sun is at center
+  // Clone the galaxy model and position it correctly
   const galaxyModel = React.useMemo(() => {
     const cloned = scene.clone();
-    cloned.scale.setScalar(0.3);
-    // Position galaxy so Sun (8.3 kpc from center) is at origin
-    cloned.position.set(-SUN_POSITION[0] * 0.1, -SUN_POSITION[1] * 0.1, -SUN_POSITION[2] * 0.1);
+    cloned.scale.setScalar(0.4); // Slightly larger for better visibility
+    
+    // Position galaxy so the galactic center is at origin
+    // The galaxy model should have its center at (0,0,0)
+    // Sun will be positioned at its actual location relative to galactic center
+    cloned.position.set(0, 0, 0);
+    
+    // Add subtle rotation to the galaxy for dynamic effect
+    cloned.rotation.y = Math.PI * 0.1; // Slight tilt for better perspective
+    
+    console.log('Galaxy model positioned at origin, Sun at:', SUN_POSITION);
+    
     return cloned;
   }, [scene]);
   
-  // Convert astronomical coordinates to 3D position
+  // Convert astronomical coordinates to 3D position using unified galactic coordinate system
   const astronomicalToCartesian = useCallback((ra: number, dec: number, distance: number): [number, number, number] => {
-    const raRad = (ra * 15 * Math.PI) / 180;
-    const decRad = (dec * Math.PI) / 180;
+    // Convert equatorial coordinates to galactic coordinates
+    const galacticCoords = equatorialToGalactic(ra, dec);
     
-    const x = distance * Math.cos(decRad) * Math.cos(raRad);
-    const y = distance * Math.cos(decRad) * Math.sin(raRad);
-    const z = distance * Math.sin(decRad);
+    // Convert galactic coordinates to Cartesian coordinates
+    // This gives us the position relative to the galactic center
+    const galacticPos = galacticToCartesian(
+      galacticCoords.l, 
+      galacticCoords.b, 
+      distance / 1000 // Convert parsecs to kpc
+    );
     
-    return [x, y, z];
+    // Return position relative to galactic center (not Sun)
+    // This ensures all objects are in the same coordinate system
+    return [galacticPos.x, galacticPos.y, galacticPos.z];
   }, []);
   
   // Update camera distance based on zoom
@@ -148,39 +266,33 @@ const GalaxyWithExoplanets: React.FC<{
       {/* Galaxy Model */}
       <primitive object={galaxyModel} />
       
-      {/* Sun indicator at center */}
-      <mesh position={[0, 0, 0]}>
-        <sphereGeometry args={[0.2, 16, 16]} />
+      {/* Animated Sun at center */}
+      <AnimatedSun />
+      
+      {/* Fallback Sun - Always visible at correct galactic position */}
+      <mesh position={SUN_POSITION}>
+        <sphereGeometry args={[1.2, 32, 32]} />
         <meshBasicMaterial 
           color="#FFD700" 
           transparent
-          opacity={0.9}
+          opacity={1}
         />
       </mesh>
       
-      {/* Sun glow effect */}
-      <mesh position={[0, 0, 0]}>
-        <sphereGeometry args={[0.3, 16, 16]} />
-        <meshBasicMaterial 
-          color="#FFD700" 
-          transparent
-          opacity={0.3}
-        />
-      </mesh>
-      
-      {/* Background stars */}
+      {/* Enhanced background stars - scaled for galactic coordinate system */}
       <Stars 
-        radius={1000} 
-        depth={100} 
-        count={3000} 
-        factor={4} 
+        radius={5000} 
+        depth={500} 
+        count={8000} 
+        factor={8} 
         saturation={0} 
         fade 
+        speed={0.3}
       />
       
       {/* Exoplanets */}
       {useMemo(() => {
-        const visiblePlanets = exoplanets.slice(0, Math.min(maxPlanets, 500));
+        const visiblePlanets = exoplanets.slice(0, Math.min(maxPlanets, 10));
         
         return visiblePlanets.map((planet, index) => {
           const position = astronomicalToCartesian(
@@ -189,30 +301,27 @@ const GalaxyWithExoplanets: React.FC<{
             (planet.sy_dist || 1) / 100 // Scale down for visualization
           );
           
-          // Scale based on camera distance - objects get smaller and spread out when zooming in
-          const baseScale = 0.005; // Very small base scale
-          const distanceScale = Math.max(0.1, cameraDistance / 50); // Scale based on camera distance
-          const planetScale = Math.max(0.001, (planet.pl_rade || 1) / 100); // Very small planet scale
-          const finalScale = baseScale * distanceScale * planetScale;
+          // Enhanced scaling for better visibility in unified coordinate system
+          // (values computed implicitly within Planet3D via size)
           
           return (
-            <ExoplanetPoint
+            <Planet3D
               key={`${planet.pl_name || index}`}
               planet={planet}
               position={position}
-              scale={finalScale}
-              onPlanetClick={onPlanetClick}
               isSelected={selectedPlanet?.pl_name === planet.pl_name}
-              isAnimating={isAnimating}
+              onPlanetClick={onPlanetClick}
             />
           );
         });
-      }, [exoplanets, maxPlanets, cameraDistance, astronomicalToCartesian, onPlanetClick, selectedPlanet, isAnimating])}
+      }, [exoplanets, maxPlanets, cameraDistance, astronomicalToCartesian, onPlanetClick, selectedPlanet])}
       
-      {/* Lighting */}
+      {/* Enhanced lighting for galaxy visibility */}
       <ambientLight intensity={0.3} />
+      <pointLight position={[0, 0, 0]} intensity={3.0} color="#FFD700" />
       <pointLight position={[10, 10, 10]} intensity={0.5} />
-      <pointLight position={[-10, -10, -10]} intensity={0.3} />
+      <pointLight position={[-10, -10, -10]} intensity={0.5} />
+      <directionalLight position={[0, 0, 10]} intensity={0.3} />
     </>
   );
 };
@@ -221,21 +330,15 @@ export default function ExoplanetMap() {
   const [exoplanets, setExoplanets] = useState<Exoplanet[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [maxPlanets, setMaxPlanets] = useState(500);
+  const [maxPlanets, setMaxPlanets] = useState(10);
   const [selectedPlanet, setSelectedPlanet] = useState<Exoplanet | null>(null);
   const [retryCount, setRetryCount] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [cameraTarget, setCameraTarget] = useState<[number, number, number] | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handlePlanetClick = useCallback((planet: Exoplanet) => {
     setSelectedPlanet(planet);
-    setIsModalOpen(true);
     console.log('Selected planet:', planet);
-  }, []);
-
-  const handleCloseModal = useCallback(() => {
-    setIsModalOpen(false);
   }, []);
 
   const retryLoading = useCallback(() => {
@@ -250,25 +353,31 @@ export default function ExoplanetMap() {
     setIsAnimating(true);
     setSelectedPlanet(planet);
     
-    // Calculate planet position in 3D space
-    const raRad = (planet.ra * 15 * Math.PI) / 180;
-    const decRad = (planet.dec * Math.PI) / 180;
-    const distance = (planet.sy_dist || 1) / 100; // Scale down for visualization
+    // Use the unified galactic coordinate system to calculate planet position
+    const galacticCoords = equatorialToGalactic(planet.ra || 0, planet.dec || 0);
+    const galacticPos = galacticToCartesian(
+      galacticCoords.l, 
+      galacticCoords.b, 
+      (planet.sy_dist || 1) / 1000 // Convert parsecs to kpc
+    );
     
+    // Position relative to galactic center (same system as Sun)
     const planetPosition: [number, number, number] = [
-      distance * Math.cos(decRad) * Math.cos(raRad),
-      distance * Math.cos(decRad) * Math.sin(raRad),
-      distance * Math.sin(decRad)
+      galacticPos.x,
+      galacticPos.y,
+      galacticPos.z
     ];
+    
+    console.log('Flying to planet:', planet.pl_name, 'at position:', planetPosition);
     
     // Set camera target to planet position
     setCameraTarget(planetPosition);
     
-    // Reset animation after 3 seconds
+    // Reset animation after 5 seconds to allow user to explore
     setTimeout(() => {
       setIsAnimating(false);
-      setCameraTarget(null);
-    }, 3000);
+      // Keep camera target set so user stays focused on planet
+    }, 5000);
   }, [isAnimating]);
 
   useEffect(() => {
@@ -395,7 +504,6 @@ export default function ExoplanetMap() {
 
   return (
     <div style={{ width: '100%', height: '100vh', position: 'relative' }}>
-      
       {/* Planet Selection Dropdown */}
       <div style={{
         position: 'absolute',
@@ -452,6 +560,29 @@ export default function ExoplanetMap() {
             🚀 Flying to {selectedPlanet?.pl_name}...
           </div>
         )}
+        
+        {/* Return to Sun button */}
+        <button
+          onClick={() => {
+            setSelectedPlanet(null);
+            setCameraTarget(null);
+            setIsAnimating(false);
+          }}
+          style={{
+            marginTop: '10px',
+            width: '100%',
+            padding: '8px',
+            background: 'rgba(255, 215, 0, 0.2)',
+            color: '#FFD700',
+            border: '1px solid rgba(255, 215, 0, 0.5)',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            fontSize: '12px'
+          }}
+          disabled={isAnimating}
+        >
+          ☀️ Return to Sun
+        </button>
       </div>
       
       {/* 3D Galaxy Visualization */}
@@ -476,12 +607,18 @@ export default function ExoplanetMap() {
           enablePan={true}
           enableZoom={true}
           enableRotate={true}
-          minDistance={10}
-          maxDistance={1000}
-          autoRotate={false}
+          minDistance={1}
+          maxDistance={2000}
+          autoRotate={!isAnimating && !selectedPlanet}
+          autoRotateSpeed={0.2}
           target={cameraTarget || [0, 0, 0]} // Orbit around selected planet or Sun
           enableDamping={true}
           dampingFactor={0.05}
+          maxPolarAngle={Math.PI / 1.8}
+          minPolarAngle={Math.PI / 6}
+          zoomSpeed={0.8}
+          rotateSpeed={0.5}
+          panSpeed={0.8}
         />
       </Canvas>
       
@@ -502,9 +639,9 @@ export default function ExoplanetMap() {
           <label style={{ display: 'block', marginBottom: '5px' }}>Max Planets:</label>
           <input
             type="range"
-            min="50"
-            max="500"
-            step="50"
+            min="1"
+            max="10"
+            step="1"
             value={maxPlanets}
             onChange={(e) => setMaxPlanets(parseInt(e.target.value))}
             style={{ width: '100%' }}
@@ -529,7 +666,7 @@ export default function ExoplanetMap() {
         fontSize: '12px',
         border: '1px solid rgba(255, 255, 255, 0.1)'
       }}>
-        <div><strong>🌌 Galaxy from Sun's Perspective</strong></div>
+        <div><strong>🌌 Milky Way Galaxy View</strong></div>
         <div>NASA Exoplanet Archive</div>
         <div>Total Available: {exoplanets.length}</div>
         <div>Displaying: {Math.min(maxPlanets, exoplanets.length)}</div>
@@ -537,7 +674,10 @@ export default function ExoplanetMap() {
           🟢 Nearby • 🔴 Large • 🔵 Small • 🟡 Others
         </div>
         <div style={{ marginTop: '5px', color: '#FFD700', fontSize: '10px' }}>
-          ☀️ View centered on Sun
+          ☀️ Sun at: ({SUN_POSITION[0].toFixed(1)}, {SUN_POSITION[1].toFixed(1)}, {SUN_POSITION[2].toFixed(1)}) kpc
+        </div>
+        <div style={{ color: '#FFD700', fontSize: '9px' }}>
+          l=90°, b=0°, 8.3 kpc from center
         </div>
       </div>
       
@@ -560,8 +700,14 @@ export default function ExoplanetMap() {
         <div>• Right-click to pan</div>
         <div>• Click planets for info</div>
         <div>• Use dropdown to fly to planets</div>
+        <div>• Click planet to focus camera</div>
+        {selectedPlanet && (
+          <div style={{ color: '#FF00FF', marginTop: '5px', fontSize: '11px' }}>
+            🎯 Focused on {selectedPlanet.pl_name}
+          </div>
+        )}
         <div style={{ color: '#FFD700', marginTop: '5px' }}>
-          ☀️ Sun is at center
+          ☀️ Unified galactic coordinate system
         </div>
       </div>
 
@@ -624,13 +770,6 @@ export default function ExoplanetMap() {
           )}
         </div>
       )}
-
-      {/* Exoplanet Modal */}
-      <ExoplanetModal
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-        exoplanet={selectedPlanet}
-      />
     </div>
   );
 }

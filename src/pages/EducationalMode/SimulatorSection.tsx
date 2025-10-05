@@ -11,12 +11,16 @@ export default function SimulatorSection() {
   const [planetRadius, setPlanetRadius] = useState(15);
   const [orbitalRadius, setOrbitalRadius] = useState(200);
   const [orbitalPeriod, setOrbitalPeriod] = useState(8);
-  const [orbitalInclination, setOrbitalInclination] = useState(90);
   const [animationSpeed, setAnimationSpeed] = useState(1.0);
-  const [viewAzimuth, setViewAzimuth] = useState(90);
   const [limbDarkening, setLimbDarkening] = useState(0.6);
-  const [viewElevation, setViewElevation] = useState(0);
   const [starTemperature, setStarTemperature] = useState("G-type");
+  
+  // Fixed orbital inclination for proper transit view
+  const orbitalInclination = 90;
+  
+  // View angles controlled by view buttons only
+  const [viewAzimuth, setViewAzimuth] = useState(90);
+  const [viewElevation, setViewElevation] = useState(0);
 
   // Display values
   const eclipseDepth = ((planetRadius / starRadius) ** 2 * 100).toFixed(2);
@@ -27,8 +31,12 @@ export default function SimulatorSection() {
   ).toFixed(2);
   const planetStarRatio = (planetRadius / starRadius).toFixed(3);
 
+  const [resetKey, setResetKey] = useState(0);
+  
   const handleReset = () => {
     setIsPlaying(false);
+    // Force remount of the simulator by changing key
+    setResetKey(prev => prev + 1);
   };
 
   const handleViewChange = (view: string) => {
@@ -60,6 +68,7 @@ export default function SimulatorSection() {
 
         <div className={styles.simulationArea}>
           <ExoplanetSimulator3D
+            key={resetKey}
             starRadius={starRadius}
             planetRadius={planetRadius}
             orbitalRadius={orbitalRadius}
@@ -95,7 +104,7 @@ export default function SimulatorSection() {
               }`}
               onClick={() => handleViewChange("sideView")}
             >
-              SideView (Eclipse)
+              SideView (Transit)
             </button>
             <button
               className={`${styles.viewButton} ${
@@ -207,21 +216,6 @@ export default function SimulatorSection() {
 
           <div className={styles.parameterRow}>
             <div className={styles.parameterRowLabel}>
-              <label>Orbital Inclination</label>
-              <span>{orbitalInclination} degrees</span>
-            </div>
-            <input
-              type="range"
-              min="0"
-              max="90"
-              value={orbitalInclination}
-              onChange={(e) => setOrbitalInclination(Number(e.target.value))}
-              className={styles.slider}
-            />
-          </div>
-
-          <div className={styles.parameterRow}>
-            <div className={styles.parameterRowLabel}>
               <label>Animation Speed</label>
               <span>{animationSpeed}x speed</span>
             </div>
@@ -238,21 +232,6 @@ export default function SimulatorSection() {
 
           <div className={styles.parameterRow}>
             <div className={styles.parameterRowLabel}>
-              <label>View Azimuth</label>
-              <span>{viewAzimuth} degrees</span>
-            </div>
-            <input
-              type="range"
-              min="0"
-              max="360"
-              value={viewAzimuth}
-              onChange={(e) => setViewAzimuth(Number(e.target.value))}
-              className={styles.slider}
-            />
-          </div>
-
-          <div className={styles.parameterRow}>
-            <div className={styles.parameterRowLabel}>
               <label>Limb Darkening</label>
               <span>{limbDarkening} coefficient</span>
             </div>
@@ -263,21 +242,6 @@ export default function SimulatorSection() {
               step="0.1"
               value={limbDarkening}
               onChange={(e) => setLimbDarkening(Number(e.target.value))}
-              className={styles.slider}
-            />
-          </div>
-
-          <div className={styles.parameterRow}>
-            <div className={styles.parameterRowLabel}>
-              <label>View Elevation</label>
-              <span>{viewElevation} degrees</span>
-            </div>
-            <input
-              type="range"
-              min="-90"
-              max="90"
-              value={viewElevation}
-              onChange={(e) => setViewElevation(Number(e.target.value))}
               className={styles.slider}
             />
           </div>

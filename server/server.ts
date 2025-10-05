@@ -102,7 +102,7 @@ app.get("/api/nasa-tap", async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
+app.listen(PORT,'83.217.222.42', () => {
   console.log(`Server running on http://localhost:${PORT}`);
   console.log(`Available endpoints:`);
   console.log(`  GET /api/exoplanets - Get exoplanet data`);

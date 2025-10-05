@@ -2,7 +2,8 @@
 
 .aboutContainer {
   color: white;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
   width: 630px;
   margin: 0 auto;
   padding: 40px 20px;
@@ -26,6 +27,16 @@
   margin-bottom: 60px;
 }
 
+.section2 {
+  margin-bottom: 60px;
+  position: relative;
+}
+.bg{
+  position: absolute;
+  right: -130px;
+  top: -20px;
+  z-index: -1;
+}
 .sectionTitle {
   font-size: 2.2rem;
   font-weight: 700;
@@ -54,10 +65,21 @@
 }
 
 .missionItem h3 {
-  font-size: 1.3rem;
-  font-weight: 700;
-  margin: 0 0 8px 0;
   color: white;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 100%;
+  letter-spacing: -2%;
+  vertical-align: bottom;
+}
+.cosmicImage {
+  width: 200px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 15px;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
 }
 
 .missionItem p {
@@ -85,7 +107,7 @@
 .cosmicImage {
   width: 200px;
   height: 150px;
-  background: linear-gradient(135deg, #4a0e4e 0%, #2d1b69 50%, #1e3a8a 100%);
+  /* background: linear-gradient(135deg, #4a0e4e 0%, #2d1b69 50%, #1e3a8a 100%); */
   border-radius: 15px;
   position: relative;
   overflow: hidden;
@@ -93,7 +115,7 @@
 }
 
 .cosmicImage::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 20px;
   right: 30px;
@@ -105,7 +127,7 @@
 }
 
 .cosmicImage::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 30px;
   left: 20px;
@@ -193,31 +215,31 @@
   .aboutContainer {
     padding: 30px 15px;
   }
-  
+
   .sectionTitle {
     font-size: 1.8rem;
   }
-  
+
   .mainDescription p {
     font-size: 1.2rem;
   }
-  
+
   .missionsGrid,
   .methodsGrid {
     grid-template-columns: 1fr;
   }
-  
+
   .howItWorksContent {
     flex-direction: column;
     gap: 20px;
   }
-  
+
   .cosmicImage {
     width: 100%;
     max-width: 300px;
     height: 120px;
   }
-  
+
   .techGrid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -227,23 +249,23 @@
   .aboutContainer {
     padding: 20px 10px;
   }
-  
+
   .sectionTitle {
     font-size: 1.6rem;
   }
-  
+
   .mainDescription p {
     font-size: 1.1rem;
   }
-  
+
   .techGrid {
     grid-template-columns: 1fr;
   }
-  
+
   .missionItem {
     gap: 10px;
   }
-  
+
   .missionItem h3 {
     font-size: 1.1rem;
   }
